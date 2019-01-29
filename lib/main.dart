@@ -15,7 +15,7 @@ Future<void> main() async
 {
   //connect to firebase
   final FirebaseApp app = await FirebaseApp.configure(
-    name: 'db2',
+    name: 'FlutterQR',
     options: Platform.isIOS
         ? const FirebaseOptions(
             googleAppID: '1:222742060511:ios:cd7b863a4b3342ea',
@@ -30,10 +30,17 @@ Future<void> main() async
   );
 
   //now just the usual main() stuff of running the app (widget)
-  runApp(MyApp());
+  runApp(MyApp(app: app));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget
+{
+  //firebase / realtime db: pass the app thru to teh widget as required
+  //can be later accessed in the StatefulWidget using widget.app
+  //currently just passed on thru to the MyHomePage class
+  MyApp({this.app});
+  final FirebaseApp app;
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -51,13 +58,13 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Demo Home Page', app: app),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title, this.app}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -70,11 +77,18 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+  //firebase / realtime db: link to the app object. accessed using widget.app
+  final FirebaseApp app;
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  //realtime db handles
+  DatabaseReference _messagesRef;
+  StreamSubscription<Event> _messagesSubscription;
 
   String barcode = "";
 
@@ -86,6 +100,13 @@ class _MyHomePageState extends State<MyHomePage> {
   {
     String barcode = await BarcodeScanner.scan();
     setState(() => this.barcode = barcode);
+
+
+    //this adds a new (unique) child item
+    //_messagesRef.push().set(barcode);
+
+    //this version updates the value of the item
+    _messagesRef.set(barcode);
   }
   void _handleTextChange()
   {
@@ -98,6 +119,27 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // Start listening to changes
     textEditingController.addListener(_handleTextChange);
+
+    // Realtime db stuff.
+    //connect to the db
+    final FirebaseDatabase database = FirebaseDatabase(app: widget.app);
+    database.setPersistenceEnabled(true);
+    database.setPersistenceCacheSizeBytes(10000000);
+
+    //get a reference to the messages 'table'?
+    _messagesRef = database.reference().child('message/latest');
+
+    //subscribe to changes
+    _messagesSubscription = _messagesRef.onChildChanged.listen((Event event) {
+        print('Child added: ${event.snapshot.value}');
+        //_setCurrentText(event.snapshot.value);
+
+        setState(() => this.barcode = event.snapshot.value);
+
+    }, onError: (Object o) {
+        final DatabaseError error = o;
+        print('Error: ${error.code} ${error.message}');
+    });
   }
 
   @override
@@ -105,6 +147,10 @@ class _MyHomePageState extends State<MyHomePage> {
     // Clean up the controller when the Widget is removed from the Widget tree
     // This also removes the _printLatestValue listener
     textEditingController.dispose();
+
+    //need to clean up the realtime db subscriber
+    _messagesSubscription.cancel();
+
     super.dispose();
   }
 
