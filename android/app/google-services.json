@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "222742060511",
+    "firebase_url": "https://flutterqr-5af12.firebaseio.com",
+    "project_id": "flutterqr-5af12",
+    "storage_bucket": "flutterqr-5af12.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222742060511:android:cd7b863a4b3342ea",
+        "android_client_info": {
+          "package_name": "au.edu.utas.lfwells.flutterqr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "222742060511-s1ij55eo4oimuoi514fb60pg3q8gc5uu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzEEDygh8F23E2hAEFZzEBrLNN11S8t98"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222742060511:android:fa374aecc4b4dddd",
+        "android_client_info": {
+          "package_name": "au.edu.utas.lfwells.flutterqr4"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "222742060511-s1ij55eo4oimuoi514fb60pg3q8gc5uu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzEEDygh8F23E2hAEFZzEBrLNN11S8t98"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
